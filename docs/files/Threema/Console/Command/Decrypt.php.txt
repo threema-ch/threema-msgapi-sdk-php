@@ -18,15 +18,13 @@ class Decrypt extends Base {
 
 	function doRun() {
 		$privateKey = $this->getArgumentPrivateKey(0);
-		$publicKey = $this->getArgumentPrivateKey(1);
-		$nonce = $this->getArgument(2);
-		$input = $this->readStdIn();
+		$publicKey = $this->getArgumentPublicKey(1);
+		$nonce = hex2bin($this->getArgument(2));
+		$input = hex2bin($this->readStdIn());
 
 		Common::required($privateKey, $publicKey, $nonce, $input);
 
 		$cryptTool = CryptTool::getInstance();
-		//convert nonce to bin
-		$nonce = bin2hex($nonce);
 		$message = $cryptTool->decryptMessage($input, $privateKey, $publicKey, $nonce);
 
 		Common::l((String)$message);

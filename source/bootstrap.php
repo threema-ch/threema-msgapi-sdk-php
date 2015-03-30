@@ -20,5 +20,5 @@ spl_autoload_register(function($className) use($d)
 	}
 });
 
-$sdkVersion = '1.0.2';
+$sdkVersion = '1.0.3';
 define('MSGAPI_SDK_VERSION', $sdkVersion);

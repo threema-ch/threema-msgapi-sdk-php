@@ -1,5 +1,5 @@
 # msgapi-sdk-php
-Version: 1.0.3
+Version: 1.0.4
 
 ## Installation
 

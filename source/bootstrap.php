@@ -20,5 +20,13 @@ spl_autoload_register(function($className) use($d)
 	}
 });
 
-$sdkVersion = '1.0.3';
+$sdkVersion = '1.0.4';
 define('MSGAPI_SDK_VERSION', $sdkVersion);
+$cryptTool = Threema\MsgApi\Tools\CryptTool::getInstance();
+
+if(null === $cryptTool) {
+	throw new \Threema\Core\Exception("no supported crypt-tool");
+}
+
+//run validate
+$cryptTool->validate();

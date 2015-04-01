@@ -4,6 +4,7 @@
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 namespace Threema\MsgApi\Tools;
+use Threema\Core\Exception;
 use Threema\Core\KeyPair;
 use Threema\MsgApi\Exceptions\BadMessageException;
 use Threema\MsgApi\Exceptions\DecryptionFailedException;
@@ -200,4 +201,12 @@ abstract class CryptTool {
 	 * @return bool
 	 */
 	abstract public function isSupported();
+
+	/**
+	 * Validate crypt tool
+	 *
+	 * @return bool
+	 * @throws Exception
+	 */
+	abstract public function validate();
 }

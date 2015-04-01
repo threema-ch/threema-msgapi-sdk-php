@@ -7,6 +7,7 @@
 namespace Threema\MsgApi\Tools;
 
 use Salt;
+use Threema\Core\Exception;
 use Threema\Core\KeyPair;
 
 /**
@@ -87,4 +88,23 @@ class CryptToolSalt extends CryptTool {
 	public function isSupported() {
 		return class_exists('Salt');
 	}
+
+	/**
+	 * Validate crypt tool
+	 *
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function validate() {
+		if(false === $this->isSupported()) {
+			throw new Exception('SALT implementation not supported');
+		}
+
+		if(PHP_INT_SIZE < 8) {
+			throw new Exception('Pure PHP Crypto implementation requires 64Bit PHP. Please install the libsodium PHP extension.');
+		}
+		return true;
+	}
+
+
 }

@@ -7,6 +7,7 @@
 namespace Threema\MsgApi\Tools;
 
 use Salt;
+use Threema\Core\Exception;
 use Threema\Core\KeyPair;
 
 /**
@@ -74,6 +75,19 @@ class CryptToolSodium extends  CryptTool {
 	 */
 	public function isSupported() {
 		return class_exists('Sodium');
+	}
+
+	/**
+	 * Validate crypt tool
+	 *
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function validate() {
+		if(false === $this->isSupported()) {
+			throw new Exception('Sodium implementation not supported');
+		}
+		return true;
 	}
 
 

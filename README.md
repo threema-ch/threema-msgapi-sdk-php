@@ -90,7 +90,7 @@ Hash an email address for identity lookup. Prints the hash in hex.
 
 ####Hash Phone Number
 	threema-msgapi-tool.php -h -p <phoneNo>
-Decrypt standard input using the given recipient private key and sender public key. The nonce must be given on the command line, and the box (hex) on standard input. Prints the decrypted message to standard output.
+Hash a phone number for identity lookup. Prints the hash in hex.
 
 ####Generate Key Pair
 	threema-msgapi-tool.php -g <privateKeyFile> <publicKeyFile>

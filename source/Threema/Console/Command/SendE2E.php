@@ -44,8 +44,19 @@ class SendE2E extends Base {
 		//random nonce first
 		$nonce = $t->randomNonce();;
 
+		$receiverPublicKey = $connector->fetchPublicKey($to);
+
+		if(null == $receiverPublicKey || !$receiverPublicKey->isSuccess()) {
+			Common::e('Invalid threema id');
+			return;
+		}
+
 		//create a box
-		$textMessage = CryptTool::getInstance()->encryptMessageText($message, $privateKey, $publicKey, $nonce);
+		$textMessage = CryptTool::getInstance()->encryptMessageText(
+			$message,
+			$privateKey,
+			hex2bin($receiverPublicKey->getPublicKey()),
+			$nonce);
 
 		$result = $connector->sendE2E($receiver, $nonce, $textMessage);
 		if($result->isSuccess()) {

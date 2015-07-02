@@ -70,8 +70,8 @@ abstract class CryptTool {
 	 * Encrypt a text message.
 	 *
 	 * @param string $text the text to be encrypted (max. 3500 bytes)
-	 * @param string $senderPrivateKey the private key of the sending ID
-	 * @param string $recipientPublicKey the public key of the receiving ID
+	 * @param string $senderPrivateKey the private key of the sending ID (bin)
+	 * @param string $recipientPublicKey the public key of the receiving ID (bin)
 	 * @param string $nonce the nonce to be used for the encryption (usually 24 random bytes)
 	 * @return string encrypted box
 	 */

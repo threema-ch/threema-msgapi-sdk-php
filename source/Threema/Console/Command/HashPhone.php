@@ -12,7 +12,7 @@ class HashPhone extends Base {
 	function __construct() {
 		parent::__construct('Hash Phone Number',
 			array('phoneNo'),
-			'Decrypt standard input using the given recipient private key and sender public key. The nonce must be given on the command line, and the box (hex) on standard input. Prints the decrypted message to standard output.');
+			'Hash a phone number for identity lookup. Prints the hash in hex.');
 	}
 
 	function doRun() {

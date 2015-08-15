@@ -10,44 +10,43 @@ Version: 1.0.4
   
   To install the libsodium PHP extension:
   
-		pecl install libsodium
+	pecl install libsodium
   
   Then add the following line to your php.ini file:
   
-		extension=libsodium.so
+	extension=libsodium.so
 
 ## SDK usage
 ### Creating a connection
 
-		use Threema\MsgApi\Connection;
-		use Threema\MsgApi\ConnectionSettings;
-		use Threema\MsgApi\Receiver;
+	use Threema\MsgApi\Connection;
+	use Threema\MsgApi\ConnectionSettings;
+	use Threema\MsgApi\Receiver;
 
-		require_once('lib/bootstrap.php');
+	require_once('lib/bootstrap.php');
 
-		//define your connection settings
-		$settings = new ConnectionSettings(
-			'*THREEMA',
-			'THISISMYSECRET'
-		);
-
-		//create a connection
-		$connector = new Connection($settings);
+	//define your connection settings
+	$settings = new ConnectionSettings(
+		'*THREEMA',
+		'THISISMYSECRET'
+	);
+	//create a connection
+	$connector = new Connection($settings);
 
 ### Sending a text message to a Threema ID (Simple Mode)
 
-		//create the connection
-		//(...)
-		//create a receiver
-		$receiver = new Receiver('ABCD1234', Receiver::typeId);
+	//create the connection
+	//(...)
+	//create a receiver
+	$receiver = new Receiver('ABCD1234', Receiver::typeId);
 
-		$result = $connector->sendSimple($receiver, "This is a Test Message");
-		if($result->isSuccess()) {
-			echo 'new id created '.$result->getMessageId();
-		}
-		else {
-			echo 'error '.$result->getErrorMessage();
-		}
+	$result = $connector->sendSimple($receiver, "This is a Test Message");
+	if($result->isSuccess()) {
+		echo 'new id created '.$result->getMessageId();
+	}
+	else {
+		echo 'error '.$result->getErrorMessage();
+	}
 
 ### Sending a text message to a Threema ID (E2E Mode)
 

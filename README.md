@@ -7,6 +7,7 @@ Version: 1.0.4
 - For better encryption performance, install the [libsodium PHP extension] (https://github.com/jedisct1/libsodium-php).
   This step is optional; if the libsodium PHP extension is not available,
   the SDK will automatically fall back to (slower) pure PHP code for ECC encryption.
+  To be able to the PHP encryption you have to use 64bit version of PHP.
   
   To install the libsodium PHP extension:
   

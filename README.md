@@ -3,8 +3,8 @@ Version: 1.0.4
 
 ## Installation
 
-- Install PHP 5.4 or later: http://php.net/manual/en/install.php
-- For better encryption performance, install the libsodium PHP extension.
+- Install PHP 5.4 or later: https://secure.php.net/manual/en/install.php
+- For better encryption performance, install the [libsodium PHP extension] (https://github.com/jedisct1/libsodium-php).
   This step is optional; if the libsodium PHP extension is not available,
   the SDK will automatically fall back to (slower) pure PHP code for ECC encryption.
   

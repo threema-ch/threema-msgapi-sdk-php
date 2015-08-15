@@ -7,7 +7,7 @@ Version: 1.0.4
 - For better encryption performance, install the [libsodium PHP extension] (https://github.com/jedisct1/libsodium-php).
   This step is optional; if the libsodium PHP extension is not available,
   the SDK will automatically fall back to (slower) pure PHP code for ECC encryption.
-  To be able to the PHP encryption you have to use 64bit version of PHP.
+  A 64bit version of PHP is required for pure PHP encryption.
   
   To install the libsodium PHP extension:
   
@@ -16,6 +16,8 @@ Version: 1.0.4
   Then add the following line to your php.ini file:
   
 	extension=libsodium.so
+
+If you want to check whether your server meets the requirements and everything is configured properly you can execute ```threema-msgapi-tool.php``` without any parameters on the console or point your browser to the location where it's saved on your server. 
 
 ## SDK usage
 ### Creating a connection

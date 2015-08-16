@@ -3,51 +3,53 @@ Version: 1.0.4
 
 ## Installation
 
-- Install PHP 5.4 or later: http://php.net/manual/en/install.php
-- For better encryption performance, install the libsodium PHP extension.
+- Install PHP 5.4 or later: https://secure.php.net/manual/en/install.php
+- For better encryption performance, install the [libsodium PHP extension] (https://github.com/jedisct1/libsodium-php).
   This step is optional; if the libsodium PHP extension is not available,
   the SDK will automatically fall back to (slower) pure PHP code for ECC encryption.
+  A 64bit version of PHP is required for pure PHP encryption.
   
   To install the libsodium PHP extension:
   
-		pecl install libsodium
+	pecl install libsodium
   
   Then add the following line to your php.ini file:
   
-		extension=libsodium.so
+	extension=libsodium.so
+
+If you want to check whether your server meets the requirements and everything is configured properly you can execute ```threema-msgapi-tool.php``` without any parameters on the console or point your browser to the location where it is saved on your server. 
 
 ## SDK usage
 ### Creating a connection
 
-		use Threema\MsgApi\Connection;
-		use Threema\MsgApi\ConnectionSettings;
-		use Threema\MsgApi\Receiver;
+	use Threema\MsgApi\Connection;
+	use Threema\MsgApi\ConnectionSettings;
+	use Threema\MsgApi\Receiver;
 
-		require_once('lib/bootstrap.php');
+	require_once('lib/bootstrap.php');
 
-		//define your connection settings
-		$settings = new ConnectionSettings(
-			'*THREEMA',
-			'THISISMYSECRET'
-		);
-
-		//create a connection
-		$connector = new Connection($settings);
+	//define your connection settings
+	$settings = new ConnectionSettings(
+		'*THREEMA',
+		'THISISMYSECRET'
+	);
+	//create a connection
+	$connector = new Connection($settings);
 
 ### Sending a text message to a Threema ID (Simple Mode)
 
-		//create the connection
-		//(...)
-		//create a receiver
-		$receiver = new Receiver('ABCD1234', Receiver::typeId);
+	//create the connection
+	//(...)
+	//create a receiver
+	$receiver = new Receiver('ABCD1234', Receiver::typeId);
 
-		$result = $connector->sendSimple($receiver, "This is a Test Message");
-		if($result->isSuccess()) {
-			echo 'new id created '.$result->getMessageId();
-		}
-		else {
-			echo 'error '.$result->getErrorMessage();
-		}
+	$result = $connector->sendSimple($receiver, "This is a Test Message");
+	if($result->isSuccess()) {
+		echo 'new id created '.$result->getMessageId();
+	}
+	else {
+		echo 'error '.$result->getErrorMessage();
+	}
 
 ### Sending a text message to a Threema ID (E2E Mode)
 

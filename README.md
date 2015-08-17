@@ -11,11 +11,11 @@ Version: 1.0.4
   
   To install the libsodium PHP extension:
   
-	pecl install libsodium
+	  pecl install libsodium
   
   Then add the following line to your php.ini file:
   
-	extension=libsodium.so
+	  extension=libsodium.so
 
 If you want to check whether your server meets the requirements and everything is configured properly you can execute ```threema-msgapi-tool.php``` without any parameters on the console or point your browser to the location where it is saved on your server. 
 

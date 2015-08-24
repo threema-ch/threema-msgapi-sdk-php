@@ -218,6 +218,7 @@ class Connection {
 
 		$options[CURLOPT_POST] = true;
 		$options[CURLOPT_HTTPHEADER] = array('Content-Type: multipart/form-data');
+		$options[CURLOPT_SAFE_UPLOAD] = true;
 		$options[CURLOPT_POSTFIELDS] = array(
 			'blob'=> $command->getData()
 		);

@@ -1,24 +1,31 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi;
 use Threema\Core\Exception;
 use Threema\Core\Url;
+use Threema\MsgApi\Commands\Capability;
 use Threema\MsgApi\Commands\CommandInterface;
+use Threema\MsgApi\Commands\DownloadFile;
 use Threema\MsgApi\Commands\FetchPublicKey;
 use Threema\MsgApi\Commands\LookupEmail;
 use Threema\MsgApi\Commands\LookupPhone;
+use Threema\MsgApi\Commands\MultiPartCommandInterface;
+use Threema\MsgApi\Commands\Results\CapabilityResult;
+use Threema\MsgApi\Commands\Results\DownloadFileResult;
 use Threema\MsgApi\Commands\Results\FetchPublicKeyResult;
 use Threema\MsgApi\Commands\Results\LookupIdResult;
-use Threema\MsgApi\Commands\Results\LookupPhoneResult;
 use Threema\MsgApi\Commands\Results\Result;
 use Threema\MsgApi\Commands\Results\SendSimpleResult;
 use Threema\MsgApi\Commands\Results\SendE2EResult;
+use Threema\MsgApi\Commands\Results\UploadFileResult;
 use Threema\MsgApi\Commands\SendSimple;
 use Threema\MsgApi\Commands\SendE2E;
+use Threema\MsgApi\Commands\UploadFile;
 
 /**
  * Class Connection
@@ -26,20 +33,22 @@ use Threema\MsgApi\Commands\SendE2E;
  */
 class Connection {
 	/**
-	 * @var string
-	 */
-	private $host = 'https://msgapi.threema.ch';
-
-	/**
-	 * @var \Threema\MsgApi\ConnectionSettings
+	 * @var ConnectionSettings
 	 */
 	private $setting;
 
 	/**
-	 * @param \Threema\MsgApi\ConnectionSettings $setting
+	 * @var PublicKeyStore
 	 */
-	function __construct(ConnectionSettings $setting) {
+	private $publicKeyStore;
+
+	/**
+	 * @param ConnectionSettings $setting
+	 * @param PublicKeyStore $publicKeyStore stores the public keys locally to save network traffic
+	 */
+	function __construct(ConnectionSettings $setting, PublicKeyStore $publicKeyStore = null) {
 		$this->setting = $setting;
+		$this->publicKeyStore = $publicKeyStore;
 	}
 
 	/**
@@ -53,14 +62,34 @@ class Connection {
 	}
 
 	/**
-	 * @param Receiver $receiver
-	 * @param $nonce
-	 * @param $box
+	 * @param string $threemaId
+	 * @param string $nonce
+	 * @param string $box
 	 * @return SendE2EResult
 	 */
-	public function sendE2E(Receiver $receiver, $nonce, $box) {
-		$command = new SendE2E($receiver, $nonce, $box);
+	public function sendE2E($threemaId, $nonce, $box) {
+		$command = new SendE2E($threemaId, $nonce, $box);
 		return $this->post($command);
+	}
+
+	/**
+	 * @param $encryptedFileData (binary string)
+	 * @return UploadFileResult
+	 */
+	public function uploadFile($encryptedFileData) {
+		$command = new UploadFile($encryptedFileData);
+		return $this->postMultiPart($command);
+	}
+
+
+	/**
+	 * @param $blobId
+	 * @param callable $progress
+	 * @return DownloadFileResult
+	 */
+	public function downloadFile($blobId, \Closure $progress = null) {
+		$command = new DownloadFile($blobId);
+		return $this->get($command, $progress);
 	}
 
 	/**
@@ -81,17 +110,54 @@ class Connection {
 	}
 
 	/**
+	 * @param string $threemaId valid threema id (8 Chars)
+	 * @return CapabilityResult
+	 */
+	public function keyCapability($threemaId) {
+		return $this->get(new Capability($threemaId));
+	}
+	/**
 	 * @param $threemaId
 	 * @return FetchPublicKeyResult
 	 */
 	public function fetchPublicKey($threemaId) {
-		$command = new FetchPublicKey($threemaId);
-		return $this->get($command);
+		$publicKey = null;
+
+		if(null !== $this->publicKeyStore) {
+			$publicKey = $this->publicKeyStore->getPublicKey($threemaId);
+		}
+
+		if(null === $publicKey) {
+			$command = new FetchPublicKey($threemaId);
+			$result = $this->get($command);
+			if(false === $result->isSuccess()) {
+				return $result;
+			}
+			$publicKey = $result->getRawResponse();
+
+			if(null !== $this->publicKeyStore) {
+				$this->publicKeyStore->setPublicKey($threemaId, $publicKey);
+			}
+		}
+
+		//create a key result
+		return new FetchPublicKeyResult(200, $publicKey);
 	}
-	private function createDefaultOptions() {
-		return array(
+
+	/**
+	 * @param callable $progress
+	 * @return array
+	 */
+	private function createDefaultOptions(\Closure $progress = null) {
+		$options = array(
 			CURLOPT_RETURNTRANSFER => true
 		);
+
+		if(null !== $progress) {
+			$options[CURLOPT_NOPROGRESS] = false;
+			$options[CURLOPT_PROGRESSFUNCTION] = $progress;
+		}
+		return $options;
 	}
 
 	/**
@@ -111,12 +177,13 @@ class Connection {
 
 	/**
 	 * @param CommandInterface $command
+	 * @param callable $progress
 	 * @return Result
 	 */
-	protected function get(CommandInterface $command) {
+	protected function get(CommandInterface $command, \Closure $progress = null) {
 		$params = $this->processRequestParams($command->getParams());
 		return $this->call($command->getPath(),
-			$this->createDefaultOptions(),
+			$this->createDefaultOptions($progress),
 			$params,
 			function($httpCode, $response) use($command) {
 				return $command->parseResult($httpCode, $response);
@@ -141,9 +208,36 @@ class Connection {
 		});
 
 	}
+	/**
+	 * @param MultiPartCommandInterface $command
+	 * @return Result
+	 */
+	protected function postMultiPart(MultiPartCommandInterface $command) {
+		$options = $this->createDefaultOptions();
+		$params = $this->processRequestParams($command->getParams());
 
+		$options[CURLOPT_POST] = true;
+		$options[CURLOPT_HTTPHEADER] = array('Content-Type: multipart/form-data');
+		$options[CURLOPT_POSTFIELDS] = array(
+			'blob'=> $command->getData()
+		);
+
+		return $this->call($command->getPath(), $options, $params, function($httpCode, $response) use($command) {
+			return $command->parseResult($httpCode, $response);
+		});
+
+	}
+
+	/**
+	 * @param string $path
+	 * @param array $curlOptions
+	 * @param array $parameters
+	 * @param callable $result
+	 * @return mixed
+	 * @throws \Threema\Core\Exception
+	 */
 	private function call($path, array $curlOptions, array $parameters = null, \Closure $result = null) {
-		$fullPath = new Url('', $this->host);
+		$fullPath = new Url('', $this->setting->getHost());
 		$fullPath->addPath($path);
 
 		if(null !== $parameters && count($parameters)) {
@@ -151,7 +245,6 @@ class Connection {
 				$fullPath->setValue($key, $value);
 			}
 		}
-
 		$session = curl_init($fullPath->getFullPath());
 		curl_setopt_array($session, $curlOptions);
 

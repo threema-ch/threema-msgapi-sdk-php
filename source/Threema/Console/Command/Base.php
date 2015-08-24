@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\Console\Command;
 
@@ -10,6 +11,15 @@ use Threema\Console\Common;
 use Threema\Core\Exception;
 
 abstract class Base {
+	const argThreemaId = 'threemaId';
+	const argFrom = 'from';
+	const argSecret = 'secret';
+	const argPrivateKey = 'privateKey';
+	const argPublicKey = 'publicKey';
+	const argPrivateKeyFile = 'privateKeyFile';
+	const argPublicKeyFile = 'publicKeyFile';
+	const argNonce = 'nonce';
+
 	/**
 	 * @var string
 	 */
@@ -29,16 +39,22 @@ abstract class Base {
 	 * @var string
 	 */
 	private $description;
+	/**
+	 * @var array
+	 */
+	private $optionalArguments;
 
 	/**
 	 * @param string $subject
 	 * @param string[] $requiredArguments
 	 * @param string $description
+	 * @param array $optionalArguments
 	 */
-	public function __construct($subject, array $requiredArguments, $description) {
+	public function __construct($subject, array $requiredArguments, $description, array $optionalArguments = array()) {
 		$this->subject = $subject;
 		$this->requiredArguments = $requiredArguments;
 		$this->description = $description;
+		$this->optionalArguments = $optionalArguments;
 	}
 
 	/**
@@ -48,20 +64,72 @@ abstract class Base {
 		return null !== $this->requiredArguments ? count($this->requiredArguments) : 0;
 	}
 
-	public function getArgument($pos, $required = true) {
-		if(false === array_key_exists($pos, $this->arguments)) {
+	/**
+	 * @return int
+	 */
+	public function getAllArgumentsCount() {
+		return $this->getRequiredArgumentCount() + (null !== $this->optionalArguments ? count($this->optionalArguments) : 0);
+	}
+
+	/**
+	 * @param string $pos
+	 * @return int
+	 * @throws \Threema\Core\Exception
+	 */
+	private function getIndexByPos($pos){
+		$i = array_search($pos, $this->requiredArguments);
+		if(false === $i) {
+			$i = array_search($pos, $this->optionalArguments);
+			if(false !== $i) {
+				$i += count($this->requiredArguments);
+			}
+		}
+		if(false === $i) {
+			throw new Exception('argument '.$pos.' not found');
+		}
+
+		return $i;
+	}
+
+	/**
+	 * @param string $pos
+	 * @return null|string
+	 * @throws \Threema\Core\Exception
+	 */
+	public function getArgument($pos) {
+		$i = $this->getIndexByPos($pos);
+		$required = $i < count($this->requiredArguments);
+
+		if(false === array_key_exists($i, $this->arguments)) {
 			if(true === $required) {
-				throw new Exception('no argument at position '.$pos.'');
+				throw new Exception('no argument at position '.$i.' ('.$pos.')');
 			}
 			else {
 				return null;
 			}
 		}
-		return $this->arguments[$pos];
+		return $this->arguments[$i];
 	}
 
 	/**
-	 * @param $pos
+	 * return a valid file path
+	 *
+	 * @param string $pos
+	 * @return null|string
+	 * @throws \Threema\Core\Exception
+	 */
+	public function getArgumentFile($pos) {
+		$i = $this->getIndexByPos($pos);
+
+		if(false === is_file($this->arguments[$i])) {
+			throw new Exception('argument '.$i.' is not a file');
+		}
+
+		return $this->arguments[$i];
+	}
+
+	/**
+	 * @param string $pos
 	 * @return null|string
 	 */
 	public function getArgumentPrivateKey($pos) {
@@ -73,7 +141,7 @@ abstract class Base {
 	}
 
 	/**
-	 * @param $pos
+	 * @param string $pos
 	 * @return null|string
 	 */
 	public function getArgumentPublicKey($pos) {
@@ -85,7 +153,7 @@ abstract class Base {
 	}
 
 	/**
-	 * @param int $pos
+	 * @param string $pos
 	 * @return null|string
 	 */
 	private function getArgumentStringOrFileContent($pos) {
@@ -97,9 +165,21 @@ abstract class Base {
 	}
 
 	/**
+	 * @param string $pos
+	 * @return null|string
+	 */
+	public function getArgumentThreemaId($pos) {
+		$content = $this->getArgument($pos);
+		if(null !== $content && strlen($content) == 8) {
+			return strtoupper($content);
+		}
+		return null;
+	}
+
+	/**
 	 * @return string
 	 */
-	public function readStdIn() {
+	protected function readStdIn() {
 		$f = fopen( 'php://stdin', 'r' );
 
 		$lines = array();
@@ -135,14 +215,16 @@ abstract class Base {
 	 * @return string
 	 */
 	final public function help($shellColors = true) {
-		if(count($this->requiredArguments) > 0) {
+		$args = array_merge($this->requiredArguments, $this->optionalArguments);
+
+		if(count($args) > 0) {
 			$colorPrefix = '';
 			$colorPostfix = '';
 			if(true === $shellColors) {
 				$colorPrefix = "\033[0;36m\033[40m";
 				$colorPostfix = "\033[0m";
 			}
-			return  $colorPrefix.'<'.implode('> <', $this->requiredArguments).'>'.$colorPostfix;
+			return  $colorPrefix.'<'.implode('> <', $args).'>'.$colorPostfix;
 		}
 		return '';
 	}
@@ -155,10 +237,9 @@ abstract class Base {
 	}
 
 	/**
-	 * @param bool $shellColors
 	 * @return string
 	 */
-	final public function subject($shellColors = true) {
+	final public function subject() {
 		return $this->subject;
 	}
 

@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\Core;
 
@@ -42,8 +43,12 @@ class Url {
 		return $this;
 	}
 
-
-
+	/**
+	 * Add a path to the current url
+	 *
+	 * @param string $path
+	 * @return $this
+	 */
 	public function addPath($path) {
 		while(substr($this->path, strlen($this->path)-1) == '/') {
 			$this->path = substr($this->path, 0, strlen($this->path)-1);
@@ -97,15 +102,15 @@ class Url {
 
 		while(strlen($urlParameter) > 0) {
 			// name
-			$keypos= strpos($urlParameter,'=');
-			$keyval = substr($urlParameter,0,$keypos);
+			$keyPosition= strpos($urlParameter,'=');
+			$keyValue = substr($urlParameter,0,$keyPosition);
 			// value
-			$valuepos = strpos($urlParameter,'&') ? strpos($urlParameter,'&'): strlen($urlParameter);
-			$valval = substr($urlParameter,$keypos+1,$valuepos-$keypos-1);
+			$valuePosition = strpos($urlParameter,'&') ? strpos($urlParameter,'&'): strlen($urlParameter);
+			$valueValue = substr($urlParameter,$keyPosition+1,$valuePosition-$keyPosition-1);
 
-			// decoding the respose
-			$result[$keyval] = urldecode($valval);
-			$urlParameter = substr($urlParameter,$valuepos+1,strlen($urlParameter));
+			// decoding the response
+			$result[$keyValue] = urldecode($valueValue);
+			$urlParameter = substr($urlParameter,$valuePosition+1,strlen($urlParameter));
 		}
 
 		return $result;

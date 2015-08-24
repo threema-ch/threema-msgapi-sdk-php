@@ -1,10 +1,12 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Commands;
+
 use Threema\MsgApi\Commands\Results\SendSimpleResult;
 use Threema\MsgApi\Receiver;
 
@@ -13,6 +15,7 @@ class SendSimple implements CommandInterface {
 	 * @var string
 	 */
 	private $text;
+
 	/**
 	 * @var \Threema\MsgApi\Receiver
 	 */
@@ -27,6 +30,9 @@ class SendSimple implements CommandInterface {
 		$this->receiver = $receiver;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getText() {
 		return $this->text;
 	}
@@ -40,6 +46,9 @@ class SendSimple implements CommandInterface {
 		return $p;
 	}
 
+	/**
+	 * @return string
+	 */
 	function getPath() {
 		return 'send_simple';
 	}

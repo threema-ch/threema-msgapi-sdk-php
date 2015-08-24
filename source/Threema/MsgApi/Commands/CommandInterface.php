@@ -1,15 +1,20 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi\Commands;
 
 use Threema\MsgApi\Commands\Results\Result;
 
 interface CommandInterface {
+	/**
+	 * @return string
+	 */
 	function getPath();
+
 	/**
 	 * @return array
 	 */

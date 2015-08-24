@@ -14,12 +14,15 @@ $settings = new ConnectionSettings(
 	'YOUR_GATEWAY_THREEMA_ID_SECRET'
 );
 
-//create a connection
-$connector = new Connection($settings);
+//public key store file
+//best practice: create a file-publickeystore
+//$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('keystore.txt');
+$publicKeyStore = null;
+$connector = new Connection($settings, $publicKeyStore);
 
 //create a receiver
 $receiver = new Receiver('ECHOECHO',
-	Receiver::typeId);
+	Receiver::TYPE_ID);
 
 $result = $connector->sendSimple($receiver, "This is a Test Message");
 if($result->isSuccess()) {

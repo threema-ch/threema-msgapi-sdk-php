@@ -1,10 +1,12 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Commands;
+
 use Threema\MsgApi\Commands\Results\FetchPublicKeyResult;
 
 class FetchPublicKey implements CommandInterface {
@@ -28,6 +30,9 @@ class FetchPublicKey implements CommandInterface {
 		return array();
 	}
 
+	/**
+	 * @return string
+	 */
 	function getPath() {
 		return 'pubkeys/'.urlencode($this->threemaId);
 	}

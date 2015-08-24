@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi\Tools;
 
@@ -17,15 +18,26 @@ use Threema\Core\KeyPair;
  */
 class CryptToolSalt extends CryptTool {
 	/**
-	 * @param string $textBytes
+	 * @param string $data
 	 * @param string $nonce
 	 * @param string $senderPrivateKey
 	 * @param string $recipientPublicKey
-	 * @return string enrypted box
+	 * @return string encrypted box
 	 */
-	protected function makeBox($textBytes, $nonce, $senderPrivateKey, $recipientPublicKey) {
-		$box = Salt::box($textBytes, $senderPrivateKey, $recipientPublicKey, $nonce)->toString();
-		return substr($box, 16);    /* chop off leading zero bytes */
+	protected function makeBox($data, $nonce, $senderPrivateKey, $recipientPublicKey) {
+		return Salt::box($data, $senderPrivateKey, $recipientPublicKey, $nonce)
+			->slice(16)->toString();
+	}
+
+	/**
+	 * @param string $data
+	 * @param string $nonce
+	 * @param string  $key
+	 * @return string encrypted secret box
+	 */
+	protected function makeSecretBox($data, $nonce, $key) {
+		return Salt::secretbox($data, $nonce, $key)
+			->slice(16)->toString();
 	}
 
 	/**
@@ -44,11 +56,30 @@ class CryptToolSalt extends CryptTool {
 		}
 
 		if ($data) {
-			$data = substr($data->toString(), 32);
+			return substr($data->toString(), 32);
 		}
 
-		return $data;
+		return null;
 	}
+
+	/**
+	 * decrypt a secret box
+	 *
+	 * @param string $box as binary
+	 * @param string $nonce as binary
+	 * @param string $key as binary
+	 * @return string as binary
+	 */
+	protected function openSecretBox($box, $nonce, $key) {
+		$boxPad = str_repeat("\x00", 16) . $box;
+		$data = Salt::secretbox_open($boxPad, $nonce, $key);
+
+		if ($data) {
+			return substr($data->toString(), 32);
+		}
+		return null;
+	}
+
 
 	/**
 	 * Generate a new key pair.
@@ -61,12 +92,11 @@ class CryptToolSalt extends CryptTool {
 	}
 
 	/**
-	 * Generate a random nonce.
-	 *
-	 * @return string random nonce
+	 * @param int $size
+	 * @return string
 	 */
-	final public function randomNonce() {
-		return Salt::randombytes(Salt::box_NONCE);
+	protected function createRandom($size) {
+		return Salt::randombytes($size);
 	}
 
 	/**
@@ -76,9 +106,35 @@ class CryptToolSalt extends CryptTool {
 	 * @return string public key as binary
 	 */
 	final public function derivePublicKey($privateKey) {
-		//convet to Element
 		$privateKeyElement = \FieldElement::fromString($privateKey);
 		return Salt::instance()->crypto_scalarmult_base($privateKeyElement)->toString();
+	}
+
+	/**
+	 * @param $imageData
+	 * @param $recipientPublicKey
+	 * @param $senderPrivateKey
+	 * @throws \Threema\Core\Exception
+	 * @return EncryptResult
+	 */
+	function encryptImageData($imageData, $recipientPublicKey, $senderPrivateKey) {
+		$message = Salt::decodeInput($imageData);
+		$nonce = $this->randomNonce();
+		$salt = Salt::instance();
+
+		//secret key
+		$key = $salt->scalarmult($senderPrivateKey, $recipientPublicKey);
+		$data = $salt->encrypt(
+			$message,
+			$message->getSize(),
+			Salt::decodeInput($nonce),
+			$key);
+
+		if($data === false) {
+			throw new Exception('encryption failed');
+		}
+
+		return new EncryptResult($data->toString(), $senderPrivateKey, $nonce, strlen($data->toString()));
 	}
 
 	/**
@@ -106,5 +162,18 @@ class CryptToolSalt extends CryptTool {
 		return true;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return 'Salt';
+	}
 
+	/**
+	 * Description of the CryptTool
+	 * @return string
+	 */
+	public function getDescription() {
+		return 'Pure PHP implementation, please try to install and use the libsodium PHP extension for a better performance';
+	}
 }

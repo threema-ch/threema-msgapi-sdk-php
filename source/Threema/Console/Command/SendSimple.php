@@ -1,27 +1,40 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\Console\Command;
+
+use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
+use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Receiver;
-use Threema\Console\Common;
 
 class SendSimple extends Base {
-	function __construct() {
+	/**
+	 * @var PublicKeyStore
+	 */
+	private $publicKeyStore;
+
+	/**
+	 * @param PublicKeyStore $publicKeyStore
+	 */
+	function __construct(PublicKeyStore $publicKeyStore) {
 		parent::__construct('Send Simple Message',
-			array('to', 'from', 'secret'),
+			array(self::argThreemaId, self::argFrom, self::argSecret),
 			'Send a message from standard input with server-side encryption to the given ID. is the API identity and \'secret\' is the API secret. the message ID on success.');
+		$this->publicKeyStore = $publicKeyStore;
 	}
 
 	function doRun() {
-		$to = $this->getArgument(0);
-		$from = $this->getArgument(1);
-		$secret = $this->getArgument(2);
+		$to = $this->getArgument(self::argThreemaId);
+		$from = $this->getArgument(self::argFrom);
+		$secret = $this->getArgument(self::argSecret);
 		Common::required($to, $from, $secret);
+
 		$message = $this->readStdIn();
 		if(strlen($message) === 0) {
 			throw new \InvalidArgumentException('please define a message');
@@ -32,8 +45,8 @@ class SendSimple extends Base {
 			$secret
 		);
 
-		$connector = new Connection($settings);
-		$receiver = new Receiver($to, Receiver::typeId);
+		$connector = new Connection($settings, $this->publicKeyStore);
+		$receiver = new Receiver($to, Receiver::TYPE_ID);
 
 		$result = $connector->sendSimple($receiver, $message);
 		if($result->isSuccess()) {

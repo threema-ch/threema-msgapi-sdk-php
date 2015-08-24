@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\Console;
 
@@ -11,15 +12,14 @@ use Threema\MsgApi\Constants;
 
 class Common {
 	/**
-	 * output a string, split to 100 chars
+	 * output a string, wrap at 100 chars
 	 *
 	 * @param string $string string to output
 	 * @param int $indent indent
 	 */
 	public static function l($string = '', $indent = 0) {
-		foreach(str_split($string, 100) as $line) {
-			echo self::ln(str_repeat('  ', $indent).trim($line));
-		}
+		$pad = str_repeat('  ', $indent);
+		echo $pad . wordwrap($string, 100, "\n" . $pad) . "\n";
 	}
 
 	/**
@@ -49,7 +49,8 @@ class Common {
 	 * @throws \Threema\Core\Exception
 	 */
 	public static function required() {
-		for($n = 0; $n < func_num_args(); $n++) {
+		$argCount = func_num_args();
+		for($n = 0; $n < $argCount; $n++) {
 			$o = func_get_arg($n);
 			if(null === $o || (is_scalar($o) && strlen($o) == 0)) {
 				throw new Exception('invalid data');
@@ -64,7 +65,7 @@ class Common {
 	 * @return null|string
 	 */
 	public static function convertPublicKey($key) {
-		if(null != $key) {
+		if(null !== $key) {
 			return Constants::PUBLIC_KEY_PREFIX.$key;
 		}
 		return null;
@@ -90,7 +91,7 @@ class Common {
 	 * @return null|string
 	 */
 	public static function convertPrivateKey($key) {
-		if(null != $key) {
+		if(null !== $key) {
 			return Constants::PRIVATE_KEY_PREFIX.$key;
 		}
 		return null;

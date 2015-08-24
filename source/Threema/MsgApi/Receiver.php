@@ -1,22 +1,33 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi;
 
 class Receiver {
-	const typeId = 'to';
-	const typePhone = 'phone';
-	const typeEmail = 'email';
+	const TYPE_ID = 'to';
+	const TYPE_PHONE = 'phone';
+	const TYPE_EMAIL = 'email';
 
-	private $type = self::typeId;
+	/**
+	 * @var string
+	 */
+	private $type = self::TYPE_ID;
+
+	/**
+	 * @var string
+	 */
 	private $value;
 
-	public function __construct($value, $type = self::typeId) {
-		$this->value = $value;
-		$this->type = $type;
+	/**
+	 * @param string $value
+	 * @param string $type
+	 */
+	public function __construct($value, $type = self::TYPE_ID) {
+		$this->setValue($value, $type);
 	}
 
 	/**
@@ -25,7 +36,7 @@ class Receiver {
 	 */
 	public function setToThreemaId($threemaId) {
 		return $this->setValue($threemaId,
-			self::typeId);
+			self::TYPE_ID);
 	}
 
 	/**
@@ -34,7 +45,7 @@ class Receiver {
 	 */
 	public function setToPhoneNo($phoneNo) {
 		return $this->setValue($phoneNo,
-			self::typePhone);
+			self::TYPE_PHONE);
 	}
 
 	/**
@@ -43,7 +54,7 @@ class Receiver {
 	 */
 	public function setToEmail($emailAddress) {
 		return $this->setValue($emailAddress,
-			self::typeEmail);
+			self::TYPE_EMAIL);
 	}
 
 	/**
@@ -62,15 +73,14 @@ class Receiver {
 	 * @throws \InvalidArgumentException
 	 */
 	public function getParams() {
-		switch($this->type)
-		{
-			case self::typeId:
+		switch($this->type) {
+			case self::TYPE_ID:
 				$to = $this->type;
 				$this->value = strtoupper(trim($this->value));
 				break;
 
-			case self::typeEmail:
-			case self::typePhone:
+			case self::TYPE_EMAIL:
+			case self::TYPE_PHONE:
 				$to = $this->type;
 				break;
 			default:

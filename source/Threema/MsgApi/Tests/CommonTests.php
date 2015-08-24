@@ -1,15 +1,14 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
 
+
 namespace Threema\MsgApi\Tests;
 
 use Threema\Console\Common;
-use Threema\MsgApi\Messages\TextMessage;
-use Threema\MsgApi\Tools\CryptTool;
 
 class CommonTests extends \PHPUnit_Framework_TestCase {
 
@@ -19,17 +18,17 @@ class CommonTests extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testGetPublicKey() {
-		$realPubliKey = Common::getPublicKey(Constants::myPublicKey);
-		$this->assertEquals($realPubliKey, Constants::myPublicKeyExtract, 'myPublicKey failed');
+		$realPublicKey = Common::getPublicKey(Constants::myPublicKey);
+		$this->assertEquals($realPublicKey, Constants::myPublicKeyExtract, 'myPublicKey failed');
 	}
 
 	public function testConvertPrivateKey() {
-		$p = Common::convertPrivateKey('tresalami');
-		$this->assertEquals($p, 'private:tresalami', 'convertPrivateKey failed');
+		$p = Common::convertPrivateKey('PRIVKEYSTRING');
+		$this->assertEquals($p, 'private:PRIVKEYSTRING', 'convertPrivateKey failed');
 	}
 
 	public function testConvertPublicKey() {
-		$p = Common::convertPublicKey('tresalami');
-		$this->assertEquals($p, 'public:tresalami', 'convertPublicKey failed');
+		$p = Common::convertPublicKey('PUBKEYSTRING');
+		$this->assertEquals($p, 'public:PUBKEYSTRING', 'convertPublicKey failed');
 	}
 }

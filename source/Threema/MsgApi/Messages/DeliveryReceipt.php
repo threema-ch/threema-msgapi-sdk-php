@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi\Messages;
 
@@ -37,8 +38,6 @@ class DeliveryReceipt extends ThreemaMessage {
 	 * @param array $ackedMessageIds list of message IDs acknowledged by this delivery receipt
 	 */
 	function __construct($receiptType, array $ackedMessageIds) {
-		parent::__construct(self::TYPE_CODE);
-
 		$this->receiptType = $receiptType;
 		$this->ackedMessageIds = $ackedMessageIds;
 	}
@@ -85,5 +84,14 @@ class DeliveryReceipt extends ThreemaMessage {
 		}
 		$str .= join(", ", $hexMessageIds);
 		return $str;
+	}
+
+	/**
+	 * Get the message type code of this message.
+	 *
+	 * @return int message type code
+	 */
+	public final function getTypeCode() {
+		return self::TYPE_CODE;
 	}
 }

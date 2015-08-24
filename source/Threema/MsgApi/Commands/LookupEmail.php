@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi\Commands;
 
@@ -36,6 +37,9 @@ class LookupEmail implements CommandInterface {
 		return array();
 	}
 
+	/**
+	 * @return string
+	 */
 	function getPath() {
 		return 'lookup/email_hash/'.urlencode(CryptTool::getInstance()->hashEmail($this->emailAddress));
 	}
@@ -43,7 +47,7 @@ class LookupEmail implements CommandInterface {
 	/**
 	 * @param int $httpCode
 	 * @param object $res
-	 * @return LookupPhoneResult
+	 * @return LookupIdResult
 	 */
 	function parseResult($httpCode, $res){
 		return new LookupIdResult($httpCode, $res);

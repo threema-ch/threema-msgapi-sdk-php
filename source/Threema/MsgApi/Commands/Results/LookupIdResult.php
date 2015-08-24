@@ -1,13 +1,13 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Commands\Results;
 
 class LookupIdResult extends Result {
-
 	/**
 	 * @var string
 	 */
@@ -31,8 +31,7 @@ class LookupIdResult extends Result {
 	 * @param int $httpCode
 	 * @return string
 	 */
-	protected function getErrorMessageByErrorCode($httpCode)
-	{
+	protected function getErrorMessageByErrorCode($httpCode) {
 		switch($httpCode) {
 			case 400:
 				return 'Hash length is wrong';

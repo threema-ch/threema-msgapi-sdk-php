@@ -1,13 +1,13 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Commands\Results;
 
 class SendSimpleResult extends Result {
-
 	/**
 	 * @var string
 	 */
@@ -20,6 +20,9 @@ class SendSimpleResult extends Result {
 		$this->messageId = (string)$response;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getMessageId() {
 		return $this->messageId;
 	}
@@ -28,8 +31,7 @@ class SendSimpleResult extends Result {
 	 * @param int $httpCode
 	 * @return string
 	 */
-	protected function getErrorMessageByErrorCode($httpCode)
-	{
+	protected function getErrorMessageByErrorCode($httpCode) {
 		switch($httpCode) {
 			case 400:
 				return 'The recipient identity is invalid or the account is not set up for simple mode';
@@ -47,6 +49,4 @@ class SendSimpleResult extends Result {
 				return 'Unknown error';
 		}
 	}
-
-
 }

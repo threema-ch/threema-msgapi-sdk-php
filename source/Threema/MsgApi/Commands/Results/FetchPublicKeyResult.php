@@ -1,13 +1,13 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Commands\Results;
 
 class FetchPublicKeyResult extends Result {
-
 	/**
 	 * @var string
 	 */
@@ -31,8 +31,7 @@ class FetchPublicKeyResult extends Result {
 	 * @param int $httpCode
 	 * @return string
 	 */
-	protected function getErrorMessageByErrorCode($httpCode)
-	{
+	protected function getErrorMessageByErrorCode($httpCode) {
 		switch($httpCode) {
 			case 401:
 				return 'API identity or secret incorrect';
@@ -44,6 +43,4 @@ class FetchPublicKeyResult extends Result {
 				return 'Unknown error';
 		}
 	}
-
-
 }

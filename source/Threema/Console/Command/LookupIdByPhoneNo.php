@@ -1,36 +1,47 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\Console\Command;
 
 use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\PublicKeyStore;
 
 class LookupIdByPhoneNo extends Base {
-	function __construct() {
+	const argPhoneNo = 'phoneNo';
+
+	/**
+	 * @var PublicKeyStore
+	 */
+	private $publicKeyStore;
+
+	/**
+	 * @param PublicKeyStore $publicKeyStore
+	 */
+	function __construct(PublicKeyStore $publicKeyStore) {
 		parent::__construct('ID-Lookup By Phone Number',
-			array('phoneNo', 'from', 'secret'),
+			array(self::argPhoneNo, self::argFrom, self::argSecret),
 			'Lookup the ID linked to the given phone number (will be hashed locally).');
+		$this->publicKeyStore = $publicKeyStore;
 	}
 
 	function doRun() {
-		$phoneNo = $this->getArgument(0);
-		$from = $this->getArgument(1);
-		$secret = $this->getArgument(2);
+		$phoneNo = $this->getArgument(self::argPhoneNo);
+		$from = $this->getArgumentThreemaId(self::argFrom);
+		$secret = $this->getArgument(self::argSecret);
 
 		Common::required($phoneNo, $from, $secret);
-		//hash first
 
 		//define connection settings
 		$settings = new ConnectionSettings($from, $secret);
 
 		//create a connection
-		$connector = new Connection($settings);
+		$connector = new Connection($settings, $this->publicKeyStore);
 
 		$result = $connector->keyLookupByPhoneNumber($phoneNo);;
 		Common::required($result);
@@ -40,6 +51,5 @@ class LookupIdByPhoneNo extends Base {
 		else {
 			Common::e($result->getErrorMessage());
 		}
-
 	}
 }

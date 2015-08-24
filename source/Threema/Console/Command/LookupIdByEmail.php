@@ -1,36 +1,47 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\Console\Command;
 
 use Threema\Console\Common;
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
-use Threema\MsgApi\Tools\CryptTool;
+use Threema\MsgApi\PublicKeyStore;
 
 class LookupIdByEmail extends Base {
-	function __construct() {
+	const argEmail = 'email';
+
+	/**
+	 * @var PublicKeyStore
+	 */
+	private $publicKeyStore;
+
+	/**
+	 * @param PublicKeyStore $publicKeyStore
+	 */
+	function __construct(PublicKeyStore $publicKeyStore) {
 		parent::__construct('ID-Lookup By Email Address',
-			array('email', 'from', 'secret'),
+			array(self::argEmail, self::argFrom, self::argSecret),
 			'Lookup the ID linked to the given email address (will be hashed locally).');
+		$this->publicKeyStore = $publicKeyStore;
 	}
 
 	function doRun() {
-		$email = $this->getArgument(0);
-		$from = $this->getArgument(1);
-		$secret = $this->getArgument(2);
+		$email = $this->getArgument(self::argEmail);
+		$from = $this->getArgumentThreemaId(self::argFrom);
+		$secret = $this->getArgument(self::argSecret);
 
 		Common::required($email, $from, $secret);
-		//hash first
 
 		//define connection settings
 		$settings = new ConnectionSettings($from, $secret);
 
 		//create a connection
-		$connector = new Connection($settings);
+		$connector = new Connection($settings, $this->publicKeyStore);
 
 		$result = $connector->keyLookupByEmail($email);;
 		Common::required($result);
@@ -40,6 +51,5 @@ class LookupIdByEmail extends Base {
 		else {
 			Common::e($result->getErrorMessage());
 		}
-
 	}
 }

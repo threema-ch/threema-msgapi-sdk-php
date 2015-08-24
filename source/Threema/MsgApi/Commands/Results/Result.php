@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi\Commands\Results;
 
@@ -13,12 +14,18 @@ abstract class Result {
 	private $httpCode;
 
 	/**
+	 * @var string
+	 */
+	private $response;
+
+	/**
 	 * @param int $httpCode
 	 * @param $response
 	 */
 	function __construct($httpCode, $response) {
 		$this->httpCode = $httpCode;
 		$this->processResponse($response);
+		$this->response = $response;
 	}
 
 	final public function isSuccess() {
@@ -40,6 +47,13 @@ abstract class Result {
 	 */
 	final public function getErrorMessage() {
 		return $this->getErrorMessageByErrorCode($this->getErrorCode());
+	}
+
+	/**
+	 * @return string
+	 */
+	final public function getRawResponse() {
+		return $this->response;
 	}
 
 	/**

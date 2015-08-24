@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi\Commands;
 
@@ -36,6 +37,9 @@ class LookupPhone implements CommandInterface {
 		return array();
 	}
 
+	/**
+	 * @return string
+	 */
 	function getPath() {
 		return 'lookup/phone_hash/'.urlencode(CryptTool::getInstance()->hashPhoneNo($this->phoneNumber));
 	}

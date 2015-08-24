@@ -12,8 +12,13 @@ $settings = new ConnectionSettings(
 	'YOUR_GATEWAY_THREEMA_ID_SECRET'
 );
 
+//public key store file
+//best practice: create a file-publickeystore
+//$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('keystore.txt');
+$publicKeyStore = null;
+
 //create a connection
-$connector = new Connection($settings);
+$connector = new Connection($settings, $publicKeyStore);
 
 
 $result = $connector->fetchPublicKey('ECHOECHO');

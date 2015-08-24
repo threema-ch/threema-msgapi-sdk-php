@@ -1,32 +1,50 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Tools;
 
-use Salt;
 use Threema\Core\Exception;
 use Threema\Core\KeyPair;
 
 /**
  * Contains static methods to do various Threema cryptography related tasks.
+ * Support libsoidum >= 0.2.0 (Namespaces)
  *
  * @package Threema\Core
  */
 class CryptToolSodium extends  CryptTool {
 	/**
-	 * @param string $textBytes
+	 * @param string $data
 	 * @param string $nonce
 	 * @param string $senderPrivateKey
 	 * @param string $recipientPublicKey
-	 * @return string enrypted box
+	 * @return string encrypted box
 	 */
-	protected function makeBox($textBytes, $nonce, $senderPrivateKey, $recipientPublicKey) {
-		$kp = \Sodium::crypto_box_keypair_from_secretkey_and_publickey($senderPrivateKey, $recipientPublicKey);
-		return  \Sodium::crypto_box($textBytes, $nonce, $kp);
+	protected function makeBox($data, $nonce, $senderPrivateKey, $recipientPublicKey) {
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		$kp = \Sodium\crypto_box_keypair_from_secretkey_and_publickey($senderPrivateKey, $recipientPublicKey);
+
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return \Sodium\crypto_box($data, $nonce, $kp);
 	}
+
+	/**
+	 * make a secret box
+	 *
+	 * @param $data
+	 * @param $nonce
+	 * @param $key
+	 * @return mixed
+	 */
+	protected function makeSecretBox($data, $nonce, $key) {
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return \Sodium\crypto_secretbox($data, $nonce, $key);
+	}
+
 
 	/**
 	 * @param string $box
@@ -36,8 +54,23 @@ class CryptToolSodium extends  CryptTool {
 	 * @return null|string
 	 */
 	protected function openBox($box, $recipientPrivateKey, $senderPublicKey, $nonce) {
-		$kp = \Sodium::crypto_box_keypair_from_secretkey_and_publickey($recipientPrivateKey, $senderPublicKey);
-		return \Sodium::crypto_box_open($box, $nonce, $kp);
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		$kp = \Sodium\crypto_box_keypair_from_secretkey_and_publickey($recipientPrivateKey, $senderPublicKey);
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return \Sodium\crypto_box_open($box, $nonce, $kp);
+	}
+
+	/**
+	 * decrypt a secret box
+	 *
+	 * @param string $box as binary
+	 * @param string $nonce as binary
+	 * @param string $key as binary
+	 * @return string as binary
+	 */
+	protected function openSecretBox($box, $nonce, $key) {
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return \Sodium\crypto_secretbox_open($box, $nonce, $key);
 	}
 
 	/**
@@ -46,17 +79,19 @@ class CryptToolSodium extends  CryptTool {
 	 * @return KeyPair the new key pair
 	 */
 	final public function generateKeyPair() {
-		$kp = \Sodium::crypto_box_keypair();
-		return new KeyPair(\Sodium::crypto_box_secretkey($kp), \Sodium::crypto_box_publickey($kp));
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		$kp = \Sodium\crypto_box_keypair();
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return new KeyPair(\Sodium\crypto_box_secretkey($kp), \Sodium\crypto_box_publickey($kp));
 	}
 
 	/**
-	 * Generate a random nonce.
-	 *
-	 * @return string random nonce
+	 * @param int $size
+	 * @return string
 	 */
-	final public function randomNonce() {
-		return \Sodium::randombytes_buf(\Sodium::CRYPTO_SECRETBOX_NONCEBYTES);
+	protected function createRandom($size) {
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return \Sodium\randombytes_buf($size);
 	}
 
 	/**
@@ -66,7 +101,8 @@ class CryptToolSodium extends  CryptTool {
 	 * @return string public key as binary
 	 */
 	final public function derivePublicKey($privateKey) {
-		return \Sodium::crypto_box_publickey_from_secretkey($privateKey);
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return \Sodium\crypto_box_publickey_from_secretkey($privateKey);
 	}
 
 	/**
@@ -74,7 +110,8 @@ class CryptToolSodium extends  CryptTool {
 	 * @return bool
 	 */
 	public function isSupported() {
-		return class_exists('Sodium');
+		return true === extension_loaded('libsodium')
+			&& false === method_exists('Sodium', 'sodium_version_string');
 	}
 
 	/**
@@ -90,5 +127,19 @@ class CryptToolSodium extends  CryptTool {
 		return true;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return 'sodium';
+	}
 
+	/**
+	 * Description of the CryptTool
+	 * @return string
+	 */
+	public function getDescription() {
+		/** @noinspection PhpUndefinedNamespaceInspection @noinspection PhpUndefinedFunctionInspection */
+		return 'Sodium implementation '.\Sodium\version_string();
+	}
 }

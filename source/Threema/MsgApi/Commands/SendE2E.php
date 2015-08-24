@@ -1,42 +1,51 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
 
+
 namespace Threema\MsgApi\Commands;
+
 use Threema\MsgApi\Commands\Results\SendE2EResult;
-use Threema\MsgApi\Receiver;
 
 class SendE2E implements CommandInterface {
 	/**
 	 * @var string
 	 */
 	private $nonce;
+
 	/**
 	 * @var string
 	 */
 	private $box;
-	/**
-	 * @var \Threema\MsgApi\Receiver
-	 */
-	private $receiver;
 
 	/**
-	 * @param \Threema\MsgApi\Receiver $receiver
+	 * @var string
+	 */
+	private $threemaId;
+
+	/**
+	 * @param string $threemaId
 	 * @param string $nonce
 	 * @param string $box
 	 */
-	function __construct(Receiver $receiver, $nonce, $box) {
+	function __construct($threemaId, $nonce, $box) {
 		$this->nonce = $nonce;
 		$this->box = $box;
-		$this->receiver = $receiver;
+		$this->threemaId = $threemaId;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getNonce() {
 		return $this->nonce;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getBox() {
 		return $this->box;
 	}
@@ -45,12 +54,15 @@ class SendE2E implements CommandInterface {
 	 * @return array
 	 */
 	function getParams() {
-		$p = $this->receiver->getParams();
+		$p['to'] = $this->threemaId;
 		$p['nonce'] = bin2hex($this->getNonce());
 		$p['box'] = bin2hex($this->getBox());
 		return $p;
 	}
 
+	/**
+	 * @return string
+	 */
 	function getPath() {
 		return 'send_e2e';
 	}
@@ -64,3 +76,4 @@ class SendE2E implements CommandInterface {
 		return new SendE2EResult($httpCode, $res);
 	}
 }
+

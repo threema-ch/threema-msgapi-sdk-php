@@ -1,8 +1,9 @@
 <?php
- /**
+/**
  * @author Threema GmbH
  * @copyright Copyright (c) 2015 Threema GmbH
  */
+
 
 namespace Threema\MsgApi;
 
@@ -18,12 +19,19 @@ class ConnectionSettings {
 	private $secret;
 
 	/**
-	 * @param string $threemaId valid threema id (8chars)
-	 * @param string $secret
+	 * @var string
 	 */
-	function __construct($threemaId, $secret) {
+	private $host;
+
+	/**
+	 * @param string $threemaId valid threema id (8chars)
+	 * @param string $secret secret
+	 * @param string $host server url
+	 */
+	function __construct($threemaId, $secret, $host = 'https://msgapi.threema.ch') {
 		$this->threemaId = $threemaId;
 		$this->secret = $secret;
+		$this->host = $host;
 	}
 
 	/**
@@ -38,5 +46,12 @@ class ConnectionSettings {
 	 */
 	public function getSecret() {
 		return $this->secret;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHost() {
+		return $this->host;
 	}
 }

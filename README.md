@@ -45,7 +45,7 @@ If you want to check whether your server meets the requirements and everything i
 	//create the connection
 	//(...)
 	//create a receiver
-	$receiver = new Receiver('ABCD1234', Receiver::typeId);
+	$receiver = new Receiver('ABCD1234', Receiver::TYPE_ID);
 
 	$result = $connector->sendSimple($receiver, "This is a Test Message");
 	if($result->isSuccess()) {

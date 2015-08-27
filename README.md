@@ -89,65 +89,64 @@ If you want to check whether your server meets the requirements and everything i
 	}
 
 ## Console client usage
-###Local operations (no network communication)
-####Encrypt
+### Local operations (no network communication)
+#### Encrypt
 	threema-msgapi-tool.php -e <privateKey> <publicKey>
 Encrypt standard input using the given sender private key and recipient public key. two lines to standard output: first the nonce (hex), and then the box (hex).
 
-####Decrypt
+#### Decrypt
 	threema-msgapi-tool.php -D <privateKey> <publicKey> <nonce>
 Decrypt standard input using the given recipient private key and sender public key. The nonce must be given on the command line, and the box (hex) on standard input. Prints the decrypted message to standard output.
 
-####Hash Email Address
+#### Hash Email Address
 	threema-msgapi-tool.php -h -e <email>
 Hash an email address for identity lookup. Prints the hash in hex.
 
-####Hash Phone Number
+#### Hash Phone Number
 	threema-msgapi-tool.php -h -p <phoneNo>
 Hash a phone number for identity lookup. Prints the hash in hex.
 
-####Generate Key Pair
+#### Generate Key Pair
 	threema-msgapi-tool.php -g <privateKeyFile> <publicKeyFile>
 Generate a new key pair and write the private and public keys to the respective files (in hex).
 
-####Derive Public Key
+#### Derive Public Key
 	threema-msgapi-tool.php -d <privateKey>
 Derive the public key that corresponds with the given private key.
 
-###Network operations
-####Send Simple Message
+### Network operations
+#### Send Simple Message
 	threema-msgapi-tool.php -s <threemaId> <from> <secret>
 Send a message from standard input with server-side encryption to the given ID. is the API identity and 'secret' is the API secret. the message ID on success.
 
-####Send End-to-End Encrypted Text Message
+#### Send End-to-End Encrypted Text Message
 	threema-msgapi-tool.php -S <threemaId> <from> <secret> <privateKey>
 Encrypt standard input and send the text message to the given ID. 'from' is the API identity and 'secret' is the API secret. Prints the message ID on success.
 
-####Send a End-to-End Encrypted Image Message
+#### Send a End-to-End Encrypted Image Message
 	threema-msgapi-tool.php -S -i <threemaId> <from> <secret> <privateKey> <imageFile>
 Encrypt the image file and send the message to the given ID. 'from' is the API identity and 'secret' is the API secret. Prints the message ID on success.
 
-####Send a End-to-End Encrypted File Message
+#### Send a End-to-End Encrypted File Message
 	threema-msgapi-tool.php -S -f <threemaId> <from> <secret> <privateKey> <file> <thumbnailFile>
 Encrypt the file (and thumbnail if given) and send the message to the given ID. 'from' is the API identity and 'secret' is the API secret. Prints the message ID on success.
 
-####ID-Lookup By Email Address
+#### ID-Lookup By Email Address
 	threema-msgapi-tool.php -l -e <email> <from> <secret>
 Lookup the ID linked to the given email address (will be hashed locally).
 
-####ID-Lookup By Phone Number
+#### ID-Lookup By Phone Number
 	threema-msgapi-tool.php -l -p <phoneNo> <from> <secret>
 Lookup the ID linked to the given phone number (will be hashed locally).
 
-####Fetch Public Key
+#### Fetch Public Key
 	threema-msgapi-tool.php -l -k <threemaId> <from> <secret>
 Lookup the public key for the given ID.
 
-####Fetch Capability
+#### Fetch Capability
 	threema-msgapi-tool.php -c <threemaId> <from> <secret>
 Fetch the capabilities of a Threema ID
 
-####Decrypt a Message and download the Files
+#### Decrypt a Message and download the Files
 	threema-msgapi-tool.php -r <threemaId> <from> <secret> <privateKey> <messageId> <nonce> <outputFolder>
 Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <outputFolder> folder
-

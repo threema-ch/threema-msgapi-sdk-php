@@ -12,12 +12,12 @@ if ('cli' !== php_sapi_name()
 	die('please run '.basename(__FILE__).' only in a cli. To use the threema msgapi sdk in your web project, include the source/bootstrap.php or the threema_msgapi.phar file.');
 }
 try {
-include 'threema_msgapi.phar';
+	include '..\source\bootstrap.php';
 
 	//require a valid PublicKeyStore; create an empty file if necessary
-	$pathToKeyStoreFile = 'keystore.txt';
+	$pathToKeyStoreFile = 'keystore.php';
 	touch($pathToKeyStoreFile);
-	$fileKeyStore = new Threema\MsgApi\PublicKeyStores\File($pathToKeyStoreFile);
+	$publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile($pathToKeyStoreFile);
 
 	$tool = new \Threema\Console\Run($argv, $fileKeyStore);
 	$tool->run();
@@ -26,4 +26,3 @@ catch (\Threema\Core\Exception $exception) {
 	echo "ERROR: ".$exception->getMessage()."\n";
 	die();
 }
-

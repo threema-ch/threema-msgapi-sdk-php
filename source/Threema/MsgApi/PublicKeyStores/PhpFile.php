@@ -113,8 +113,6 @@ class PhpFile extends PublicKeyStore
         if (array_key_exists($threemaId, $this->keystore)) {
             return false;
         }
-        // NOTE: This prevents that an key is written twice into the file, but
-        // it also prevents overwriting an existing ID with a new public key.
 
         // add key
         $this->keystore[$threemaId] = $publicKey;

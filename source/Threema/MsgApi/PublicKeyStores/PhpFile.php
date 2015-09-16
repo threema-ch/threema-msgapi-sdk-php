@@ -29,12 +29,12 @@ class PhpFile extends PublicKeyStore
      * regular expression used to determinate valid $fileBlocker
      *
      * only tested at the first line
-     * https://regex101.com/r/tW7pC5/4
+     * https://regex101.com/r/tW7pC5/5
      * additional requirements: maximal 200 characters
      *
      * @var string
      */
-    private $fileBlockerRegExp = '^\<\?php\h*if\h*\(!isset\(\$isMsgApiKeystore\)\h*\|\|\h*!\$isMsgApiKeystore\)\h*(die|exit)\((.*?)\);';
+    private $fileBlockerRegExp = '^<?php\h*if\h*\(!isset\(\$isMsgApiKeystore\)\h*\|\|\h*!\$isMsgApiKeystore\)\h*(die|exit)\((.*?)\);';
 
     /**
      * @var string
@@ -150,7 +150,7 @@ class PhpFile extends PublicKeyStore
 
         // read first line and add content if neccessary
         $fileStart = fgets($fileHandle, 200);
-        if (!preg_match($this->fileBlockerRegExp, $fileStart)) {
+        if (!preg_match('/'.$this->fileBlockerRegExp.'/', $fileStart)) {
             // create content
             $content  = $this->fileBlocker."\n";
             $content .= "\n";

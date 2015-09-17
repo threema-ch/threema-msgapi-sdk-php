@@ -28,9 +28,10 @@ class ConnectionSettings {
 	 * @param string $secret secret
 	 * @param string $host server url
 	 */
-	function __construct($threemaId, $secret, $host = 'https://msgapi.threema.ch') {
+	function __construct($threemaId, $secret, $host = null) {
 		$this->threemaId = $threemaId;
 		$this->secret = $secret;
+		if ($host === null) $host = 'https://msgapi.threema.ch';
 		$this->host = $host;
 	}
 

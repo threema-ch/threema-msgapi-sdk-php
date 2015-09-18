@@ -45,7 +45,7 @@ class ConnectionSettings
 
         // TLS options
         if ($tlsOptions !== null && is_array($tlsOptions) && !empty($tlsOptions)) {
-            if (!array_key_exists('forceHttps', $tlsOptions)) {
+            if (!array_key_exists('forceHttps', $tlsOptions) || $tlsOptions['forceHttps'] === null) {
                 $tlsOptions['forceHttps'] = false;
             }
             if (!array_key_exists('tslVersion', $tlsOptions)) {

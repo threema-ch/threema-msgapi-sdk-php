@@ -171,16 +171,14 @@ class Connection
             $options[CURLOPT_PROGRESSFUNCTION] = $progress;
         }
 
-
         // tls settings
         $tlsOptions = $this->setting->getTlsOptions();
-        //debug
-        // var_dump($tlsOptions);
-        if ($tlsOptions['forceHttps'] == true) {
+
+        if ($tlsOptions['forceHttps']) {
             // limit allowed protocols to HTTPS
             $options[CURLOPT_PROTOCOLS] = CURLPROTO_HTTPS;
         }
-        if ($tlsOptions['tslVersion'] != null) {
+        if ($tlsOptions['tslVersion']) {
             if (is_int($tlsOptions['tslVersion'])) {
                 //if number is given use it
                 $options[CURLOPT_SSLVERSION] = $tlsOptions['tslVersion'];
@@ -201,14 +199,10 @@ class Connection
                         break;
                 }
             }
-            echo "\n".$options[CURLOPT_SSLVERSION];
         }
-        if ($tlsOptions['tslCipher'] != null && is_string($tlsOptions['tslCipher'])) {
-            $options[CURLOPT_PROTOCOLS] = $tlsOptions['tslCipher'];
+        if ($tlsOptions['tslCipher'] && is_string($tlsOptions['tslCipher'])) {
+            $options[CURLOPT_SSL_CIPHER_LIST] = $tlsOptions['tslCipher'];
         }
-        echo "\n.\n";
-        var_dump($options);
-        echo "\n.\n";
         return $options;
     }
 

@@ -40,6 +40,39 @@ If you want to check whether your server meets the requirements and everything i
 	//create a connection
 	$connector = new Connection($settings, $publicKeyStore);
 
+### Creating a connection with advanced options
+**Attention:** This settings change internal values of the used TLS connection. Choosing wrong settings can weaken the TLS connection or prevent connection to the server. Use this options with care!
+
+Every of the additional options shown below are optional. You can leave them out or use `null` to use the default.
+
+```
+use Threema\MsgApi\Connection;
+use Threema\MsgApi\ConnectionSettings;
+use Threema\MsgApi\Receiver;
+
+require_once('lib/bootstrap.php');
+
+//define your connection settings
+$settings = new ConnectionSettings(
+    '*THREEMA',
+    'THISISMYSECRET'
+    null, //the host to be use, set to null for default (recommend)
+    [
+        'forceHttps' => true, //set to true to force HTTPS, default: false
+        'tslVersion' => '1.2', //set the version of TLS to be used, default: null
+        'tslCipher' => 'ECDHE-RSA-AES128-GCM-SHA256' //choose a cipher or a list of ciphers, default: null
+    ]
+);
+
+//simple text file to store the public keys
+$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('/path/to/my/keystore.txt');
+
+//create a connection
+$connector = new Connection($settings, $publicKeyStore);
+```
+
+If you want to get a list of all ciphers you can use have a look at the [SSLLabs scan](https://www.ssllabs.com/ssltest/analyze.html?d=msgapi.threema.ch) and at the list of all available [OpenSSL ciphers](https://www.openssl.org/docs/manmaster/apps/ciphers.html).
+
 ### Sending a text message to a Threema ID (Simple Mode)
 
 	//create the connection

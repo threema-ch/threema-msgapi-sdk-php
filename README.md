@@ -41,11 +41,11 @@ If you want to check whether your server meets the requirements and everything i
 	$connector = new Connection($settings, $publicKeyStore);
 
 ### Creating a connection with advanced options
-**Attention:** This settings change internal values of the used TLS connection. Choosing wrong settings can weaken the TLS connection or prevent connection to the server. Use this options with care!
+**Attention:** This settings change internal values of the TLS connection. Choosing wrong settings can weaken the TLS connection or prevent connecting to the server. Use this options with care!
 
-Every of the additional options shown below are optional. You can leave them out or use `null` to use the default.
+Each of the additional options shown below is optional. You can leave it out or use `null` to use the default value for this option.
 
-```
+```php
 use Threema\MsgApi\Connection;
 use Threema\MsgApi\ConnectionSettings;
 use Threema\MsgApi\Receiver;
@@ -183,4 +183,3 @@ Fetch the capabilities of a Threema ID
 ####Decrypt a Message and download the Files
 	threema-msgapi-tool.php -r <threemaId> <from> <secret> <privateKey> <messageId> <nonce> <outputFolder>
 Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <outputFolder> folder
-

@@ -13,8 +13,8 @@ $settings = new ConnectionSettings(
 );
 
 //public key store file
-//best practice: create a file-publickeystore
-//$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('keystore.txt');
+//best practice: create a publickeystore
+//$publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('keystore.php');
 $publicKeyStore = null;
 
 //create a connection

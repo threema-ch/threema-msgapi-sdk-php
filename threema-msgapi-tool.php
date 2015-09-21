@@ -15,9 +15,9 @@ try {
     include 'threema_msgapi.phar';
 
     //require a valid PublicKeyStore; create an empty file if necessary
-    $pathToKeyStoreFile = 'keystore.php';
-    touch($pathToKeyStoreFile);
-    $publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile($pathToKeyStoreFile);
+    $keyStoreFile = 'keystore.php';
+    touch($KeyStoreFile);
+    $publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile($keyStoreFile);
 
     $tool = new \Threema\Console\Run($argv, $publicKeyStore);
     $tool->run();

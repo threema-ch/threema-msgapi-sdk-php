@@ -40,7 +40,7 @@ $settings = new ConnectionSettings(
 );
 
 //simple text file to store the public keys
-$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('/path/to/my/keystore.txt');
+$publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('/path/to/my/keystore.php');
 
 //create a connection
 $connector = new Connection($settings, $publicKeyStore);
@@ -71,7 +71,7 @@ $settings = new ConnectionSettings(
 );
 
 //simple text file to store the public keys
-$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('/path/to/my/keystore.txt');
+$publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile('/path/to/my/keystore.php');
 
 //create a connection
 $connector = new Connection($settings, $publicKeyStore);

@@ -19,7 +19,7 @@ try {
     touch($pathToKeyStoreFile);
     $publicKeyStore = new Threema\MsgApi\PublicKeyStores\PhpFile($pathToKeyStoreFile);
 
-    $tool = new \Threema\Console\Run($argv, $fileKeyStore);
+    $tool = new \Threema\Console\Run($argv, $publicKeyStore);
     $tool->run();
 } catch (\Threema\Core\Exception $exception) {
     echo "ERROR: ".$exception->getMessage()."\n";

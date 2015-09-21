@@ -9,95 +9,92 @@ namespace Threema\MsgApi;
 
 class ConnectionSettings
 {
-    /**
-     * @var string
-     */
-    private $threemaId;
+	const tlsOptionForceHttps = 'forceHttps';
+	const tlsOptionVersion = 'tlsVersion';
+	const tlsOptionCipher = 'tlsCipher';
 
-    /**
-     * @var string
-     */
-    private $secret;
+	/**
+	 * @var string
+	 */
+	private $threemaId;
 
-    /**
-     * @var string
-     */
-    private $host;
+	/**
+	 * @var string
+	 */
+	private $secret;
 
-    /**
-     * @var array
-     */
-    private $tlsOptions;
+	/**
+	 * @var string
+	 */
+	private $host;
 
-    /**
-     * @param string $threemaId valid threema id (8chars)
-     * @param string $secret secret
-     * @param string $host server url
-     */
-    public function __construct($threemaId, $secret, $host = null, $tlsOptions = null)
-    {
-        $this->threemaId = $threemaId;
-        $this->secret = $secret;
-        if ($host === null) {
-            $host = 'https://msgapi.threema.ch';
-        }
-        $this->host = $host;
+	/**
+	 * @var array
+	 */
+	private $tlsOptions = [];
 
-        // TLS options
-        if ($tlsOptions !== null && is_array($tlsOptions) && !empty($tlsOptions)) {
-            if (!array_key_exists('forceHttps', $tlsOptions) || $tlsOptions['forceHttps'] === null) {
-                $tlsOptions['forceHttps'] = false;
-            }
-            if (!array_key_exists('tslVersion', $tlsOptions)) {
-                $tlsOptions['tslVersion'] = null;
-            }
-            if (!array_key_exists('tslCipher', $tlsOptions)) {
-                $tlsOptions['tslCipher'] = null;
-            }
+	/**
+	 * @param string $threemaId valid threema id (8chars)
+	 * @param string $secret secret
+	 * @param string $host server url
+	 * @param array|null $tlsOptions
+	 */
+	public function __construct($threemaId, $secret, $host = null, array $tlsOptions = null) {
+		$this->threemaId = $threemaId;
+		$this->secret = $secret;
+		if ($host === null) {
+			$host = 'https://msgapi.threema.ch';
+		}
+		$this->host = $host;
 
-            $this->tlsOptions = $tlsOptions;
-        } else {
-            $this->tlsOptions = null;
-        }
-    }
+		// TLS options
+		if(null !== $tlsOptions && is_array($tlsOptions)) {
+			if(true === array_key_exists(self::tlsOptionForceHttps, $tlsOptions)) {
+				$this->tlsOptions[self::tlsOptionForceHttps] = $tlsOptions[self::tlsOptionForceHttps] === true;
+			}
 
-    /**
-     * @return string
-     */
-    public function getThreemaId()
-    {
-        return $this->threemaId;
-    }
+			if(true === array_key_exists(self::tlsOptionVersion, $tlsOptions)) {
+				$this->tlsOptions[self::tlsOptionVersion] = $tlsOptions[self::tlsOptionVersion];
+			}
 
-    /**
-     * @return string
-     */
-    public function getSecret()
-    {
-        return $this->secret;
-    }
+			if(true === array_key_exists(self::tlsOptionCipher, $tlsOptions)) {
+				$this->tlsOptions[self::tlsOptionCipher] = $tlsOptions[self::tlsOptionCipher];
+			}
+		}
+	}
 
-    /**
-     * @return string
-     */
-    public function getHost()
-    {
-        return $this->host;
-    }
+	/**
+	 * @return string
+	 */
+	public function getThreemaId() {
+		return $this->threemaId;
+	}
 
-    /**
-     * @return array
-     */
-    public function getTlsOptions()
-    {
-        return $this->tlsOptions;
-    }
+	/**
+	 * @return string
+	 */
+	public function getSecret() {
+		return $this->secret;
+	}
 
-    /**
-     * @return string
-     */
-    public function getTlsOption($option)
-    {
-        return $this->tlsOptions[$option];
-    }
+	/**
+	 * @return string
+	 */
+	public function getHost() {
+		return $this->host;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getTlsOptions() {
+		return $this->tlsOptions;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTlsOption($option, $default = null) {
+		return true === array_key_exists($option, $this->tlsOptions) ? $this->tlsOptions[$option] : $default;
+	}
 }

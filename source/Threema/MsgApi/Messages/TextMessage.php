@@ -33,7 +33,7 @@ class TextMessage extends ThreemaMessage {
 	 * @return string
 	 */
 	function __toString() {
-		return $this->text;
+		return 'text message';
 	}
 
 	/**

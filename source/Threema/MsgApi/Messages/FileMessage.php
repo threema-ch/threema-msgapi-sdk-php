@@ -103,7 +103,7 @@ class FileMessage extends ThreemaMessage {
 	 * @return string
 	 */
 	function __toString() {
-		return 'file message '.$this->filename;
+		return 'file message';
 	}
 
 	/**

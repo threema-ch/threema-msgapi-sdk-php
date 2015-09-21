@@ -202,7 +202,7 @@ Encrypt standard input and send the text message to the given ID. 'from' is the 
 
 #### Send a End-to-End Encrypted Image Message
 
-```
+```shell
 threema-msgapi-tool.php -S -i <threemaId> <from> <secret> <privateKey> <imageFile>
 ```
 

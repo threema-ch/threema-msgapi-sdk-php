@@ -40,6 +40,39 @@ If you want to check whether your server meets the requirements and everything i
 	//create a connection
 	$connector = new Connection($settings, $publicKeyStore);
 
+### Creating a connection with advanced options
+**Attention:** This settings change internal values of the TLS connection. Choosing wrong settings can weaken the TLS connection or prevent connecting to the server. Use this options with care!
+
+Each of the additional options shown below is optional. You can leave it out or use `null` to use the default value for this option.
+
+```php
+use Threema\MsgApi\Connection;
+use Threema\MsgApi\ConnectionSettings;
+use Threema\MsgApi\Receiver;
+
+require_once('lib/bootstrap.php');
+
+//define your connection settings
+$settings = new ConnectionSettings(
+    '*THREEMA',
+    'THISISMYSECRET'
+    null, //the host to be use, set to null for default (recommend)
+    [
+        'forceHttps' => true, //set to true to force HTTPS, default: false
+        'tslVersion' => '1.2', //set the version of TLS to be used, default: null
+        'tslCipher' => 'ECDHE-RSA-AES128-GCM-SHA256' //choose a cipher or a list of ciphers, default: null
+    ]
+);
+
+//simple text file to store the public keys
+$publicKeyStore = new Threema\MsgApi\PublicKeyStores\File('/path/to/my/keystore.txt');
+
+//create a connection
+$connector = new Connection($settings, $publicKeyStore);
+```
+
+If you want to get a list of all ciphers you can use have a look at the [SSLLabs scan](https://www.ssllabs.com/ssltest/analyze.html?d=msgapi.threema.ch) and at the list of all available [OpenSSL ciphers](https://www.openssl.org/docs/manmaster/apps/ciphers.html).
+
 ### Sending a text message to a Threema ID (Simple Mode)
 
 	//create the connection
@@ -150,4 +183,3 @@ Fetch the capabilities of a Threema ID
 ####Decrypt a Message and download the Files
 	threema-msgapi-tool.php -r <threemaId> <from> <secret> <privateKey> <messageId> <nonce> <outputFolder>
 Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <outputFolder> folder
-

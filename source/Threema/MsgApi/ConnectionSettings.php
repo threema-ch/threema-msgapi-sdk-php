@@ -36,8 +36,8 @@ class ConnectionSettings
 	/**
 	 * @param string $threemaId valid threema id (8chars)
 	 * @param string $secret secret
-	 * @param string $host server url
-	 * @param array|null $tlsOptions
+	 * @param string|null $host server url
+	 * @param array|null $tlsOptions advanced TLS options
 	 */
 	public function __construct($threemaId, $secret, $host = null, array $tlsOptions = null) {
 		$this->threemaId = $threemaId;

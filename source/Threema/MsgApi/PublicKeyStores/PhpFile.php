@@ -163,4 +163,18 @@ class PhpFile extends PublicKeyStore
 		}
 		return true;
 	}
+
+	/**
+	 * Initialize a new PhpFile Public Key Store
+	 * @param string $path the file will be created it it does not exist
+	 * @return PhpFile
+	 */
+	public static function create($path) {
+		if(false === file_exists($path)) {
+			//touch
+			touch($path);
+		}
+
+		return new PhpFile($path);
+	}
 }

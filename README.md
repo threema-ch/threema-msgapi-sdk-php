@@ -255,3 +255,11 @@ threema-msgapi-tool.php -r <threemaId> <from> <secret> <privateKey> <messageId> 
 ```
 
 Decrypt a box (must be provided on stdin) message and download (if the message is an image or file message) the file(s) to the given <outputFolder> folder
+
+#### Remaining credits
+
+```shell
+threema-msgapi-tool.php -C <from> <secret>
+```
+
+Fetch remaining credits

@@ -11,6 +11,7 @@ use Threema\Core\Exception;
 use Threema\Core\Url;
 use Threema\MsgApi\Commands\Capability;
 use Threema\MsgApi\Commands\CommandInterface;
+use Threema\MsgApi\Commands\Credits;
 use Threema\MsgApi\Commands\DownloadFile;
 use Threema\MsgApi\Commands\FetchPublicKey;
 use Threema\MsgApi\Commands\LookupEmail;
@@ -120,6 +121,14 @@ class Connection
 		return $this->get(new Capability($threemaId));
 	}
 
+
+	/**
+	 * @return CreditsResult
+	 */
+	public function credits() {
+		return $this->get(new Credits());
+	}
+
 	/**
 	 * @param $threemaId
 	 * @return FetchPublicKeyResult
@@ -166,7 +175,7 @@ class Connection
 		//tls settings
 
 		if (true === $this->setting->getTlsOption(ConnectionSettings::tlsOptionForceHttps, false)) {
-			// limit allowed protocols to HTTPS
+			//limit allowed protocols to HTTPS
 			$options[CURLOPT_PROTOCOLS] = CURLPROTO_HTTPS;
 		}
 		if ($tlsVersion = $this->setting->getTlsOption(ConnectionSettings::tlsOptionVersion)) {

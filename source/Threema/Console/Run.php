@@ -23,6 +23,7 @@ use Threema\Console\Command\SendE2EFile;
 use Threema\Console\Command\SendE2EImage;
 use Threema\Console\Command\SendE2EText;
 use Threema\Console\Command\SendSimple;
+use Threema\Console\Command\Credits;
 use Threema\Core\Exception;
 use Threema\MsgApi\PublicKeyStore;
 use Threema\MsgApi\Tools\CryptTool;
@@ -81,6 +82,7 @@ class Run {
 		$this->register(array('-l', '-k'), new LookupPublicKeyById($this->publicKeyStore));
 		$this->register(array('-c'), new Capability($this->publicKeyStore));
 		$this->register(array('-r'), new ReceiveMessage($this->publicKeyStore));
+		$this->register(array('-C'), new Credits($this->publicKeyStore));
 	}
 
 	private function register($argumentKey, Base $command) {

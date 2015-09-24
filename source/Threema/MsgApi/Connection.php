@@ -157,13 +157,13 @@ class Connection
 			CURLOPT_RETURNTRANSFER => true
 		);
 
-		// no progress
+		//no progress
 		if (null !== $progress) {
 			$options[CURLOPT_NOPROGRESS] = false;
 			$options[CURLOPT_PROGRESSFUNCTION] = $progress;
 		}
 
-		// tls settings
+		//tls settings
 
 		if (true === $this->setting->getTlsOption(ConnectionSettings::tlsOptionForceHttps, false)) {
 			// limit allowed protocols to HTTPS

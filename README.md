@@ -1,10 +1,11 @@
-**Dear visitor**
-
-**This repository is no longer maintained.**
-
-**To download the latest version of the Threema Getway SDK please go to:**
-
+**Dear visitor**  
+**This repository is no longer maintained.**  
+**To download the latest version of the Threema Getway SDK please go to:**  
 https://gateway.threema.ch/en/developer/sdk-php
+
+**A fork of this repository is maintained here: https://github.com/rugk/threema-msgapi-sdk-php**
+
+____
 
 
 # msgapi-sdk-php
